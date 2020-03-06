@@ -57,17 +57,14 @@ define([
 
              //This was from simple branching. Checked with the user had filled in a correct or incorrect. I am expanding to include more than two options
             if(config.hasOwnProperty("_userAnswer")){
-                if (config._userAnswer.hasOwnProperty("0")) {
-                    if (this.isUsingUserAnswer()) {
-                        var ans = config._userAnswer,
-                            strAns = '';
-                        for (var key in ans) {
-                            strAns += ans[key]+',';
-                        }
-                        strAns = strAns.slice(0, -1);
-
-                        result = this._checkUserAnswerModel(strAns, id);
+                if (config._userAnswer.length >= 1) {
+                    var ans = config._userAnswer;
+                    var strAns = '';
+                    for (var key in ans) {
+                        strAns += ans[key]+',';
                     }
+                    strAns = strAns.slice(0, -1);
+                    result = this._checkUserAnswerModel(strAns, id);
                 }else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
                     if (this.isUsingCorrect()) {
                         result = this._checkCorrectModel(config._userAnswer.correct, id);
@@ -118,10 +115,6 @@ define([
             return this._getModel(config.questionId);
         },
 
-        isUsingUserAnswer: function () {
-            var config = this.getConfig();
-            return config._userAnswer !== "";
-        },
         isUsingCorrect: function () {
             var config = this.getConfig();
             return config.correct !== "";
@@ -136,9 +129,10 @@ define([
         //  * An array of models associated with correct answer
         //  */
         getAnswerModel: function (ans) {
-            if (!this.isUsingUserAnswer()) return;
-            var config = this.getConfig(),
-            ids = config._userAnswer[ans];
+          var config = this.getConfig(),
+          ids = config._userAnswer[ans];
+            if (config._userAnswer.length < 1) return;
+
             console.log(ids)
             return this._getModels(ids);
         },

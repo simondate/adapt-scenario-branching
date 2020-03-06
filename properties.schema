@@ -24,12 +24,12 @@
             "_scenario": {
               "type": "object",
               "required": false,
-              "legend": "Simple Branching",
+              "legend": "Scenario branching",
               "properties": {
                 "_isEnabled": {
                   "type": "boolean",
                   "default": false,
-                  "title": "Enable Simple Branching",
+                  "title": "Enable Scenario Branching",
                   "inputType": "Checkbox",
                   "help": "help"
                 },
@@ -38,6 +38,7 @@
                   "default": "",
                   "require": true,
                   "title": "Question ID",
+                  "help": "The id of the question component above in the page that will reveal this block.",
                   "inputType": "Text",
                   "help": "help"
                 },

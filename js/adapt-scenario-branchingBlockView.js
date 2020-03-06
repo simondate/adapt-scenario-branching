@@ -22,7 +22,7 @@ define([
 
             var blockModelScenario = this.model.get('_scenario'),
             ans = blockModelScenario._userAnswer;
-            for(key in ans){
+            for(key in ans) {
                 var blockModel = Adapt.findById(ans[key]);
                 blockModel.set("_isAvailable", false);
                 blockModel.set("_isHidden", true);
@@ -46,25 +46,17 @@ define([
 
                 //     //force completion of "hidden" child
             var config = this.model.getConfig();
-            if (config._userAnswer.hasOwnProperty("0")) {
+            if (config._userAnswer && config._userAnswer.length >= 1) {
                 var notAns = this.model.isQuestionNotAnswer();
                 for (var i = 0, len = notAns.length; i < len; i++) {
                     var nu = this.model.getAnswerModel(notAns[i]);
                     if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
                 }
-            }else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
-                if (!this.model.isQuestionCorrect()) {
-                    var nu = this.model.getCorrectModel();
-                    if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
-                } else {
-                    var nu = this.model.getIncorrectModel();
-                    if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
-                }
             }
 
+            console.log(config._userAnswer.length)
 
-
-            if (config._userAnswer.hasOwnProperty("0")) {
+            if (config._userAnswer.length >= 1) {
                 var ans = this.model.isQuestionAnswer();
 
                 //show chosen answer
@@ -83,34 +75,6 @@ define([
                 //     //this._disableModel(this.model.getAnswerModel(notAns[i]));
                 // }
 
-            } else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
-                if (this.model.isQuestionCorrect()) {
-                    //show 'correct' component
-                    models = this.model.getCorrectModel();
-                    ansID = models[0];
-                    if(this.notUsed.includes(models[0].attributes._id)){
-                        var i = this.notUsed.indexOf(models[0].attributes._id);
-                        if(i != -1) {
-                            this.notUsed.splice(i, 1);
-                        }
-                    }
-                } else {
-                    //show 'incorrect' component
-                    models = this.model.getIncorrectModel();
-                    ansID = models[0];
-                    if(this.notUsed.includes(models[0].attributes._id)){
-                        var i = this.notUsed.indexOf(models[0].attributes._id);
-                        if(i != -1) {
-                            this.notUsed.splice(i, 1);
-                        }
-                    }
-                }
-                //disable hidden children
-                if (!this.model.isQuestionCorrect()) {
-                   // this._disableModel(this.model.getCorrectModel());
-                } else {
-                   // this._disableModel(this.model.getIncorrectModel());
-                }
             }
 
             if (models && models.length > 0) {
