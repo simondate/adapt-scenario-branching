@@ -56,10 +56,10 @@ define([
             }
 
              //This was from simple branching. Checked with the user had filled in a correct or incorrect. I am expanding to include more than two options
-            if(config.hasOwnProperty("answers")){
-                if (config.answers.hasOwnProperty("0")) {
+            if(config.hasOwnProperty("_userAnswer")){
+                if (config._userAnswer.hasOwnProperty("0")) {
                     if (this.isUsingUserAnswer()) {
-                        var ans = config.answers,
+                        var ans = config._userAnswer,
                             strAns = '';
                         for (var key in ans) {
                             strAns += ans[key]+',';
@@ -68,18 +68,18 @@ define([
 
                         result = this._checkUserAnswerModel(strAns, id);
                     }
-                }else if (config.answers.hasOwnProperty("correct") && config.answers.hasOwnProperty("incorrect")) {
+                }else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
                     if (this.isUsingCorrect()) {
-                        result = this._checkCorrectModel(config.answers.correct, id);
+                        result = this._checkCorrectModel(config._userAnswer.correct, id);
                     }
                     if (this.isUsingIncorrect()) {
-                        result = this._checkIncorrectModel(config.answers.incorrect, id);
+                        result = this._checkIncorrectModel(config._userAnswer.incorrect, id);
                     }
                 }
             }else{
-                    console.error("BranchingBlockModel", "Missing 'answers either by number or correct/incorrect' property in block '" + id + "'.");
+                    console.error("BranchingBlockModel", "Missing '_userAnswer either by number or correct/incorrect' property in block '" + id + "'.");
             }
-            
+
             return result;
         },
 
@@ -117,10 +117,10 @@ define([
 
             return this._getModel(config.questionId);
         },
-        
+
         isUsingUserAnswer: function () {
             var config = this.getConfig();
-            return config.userAnswer !== "";
+            return config._userAnswer !== "";
         },
         isUsingCorrect: function () {
             var config = this.getConfig();
@@ -130,7 +130,7 @@ define([
             var config = this.getConfig();
             return config.incorrect !== "";
         },
-       
+
 
         // /**
         //  * An array of models associated with correct answer
@@ -138,7 +138,8 @@ define([
         getAnswerModel: function (ans) {
             if (!this.isUsingUserAnswer()) return;
             var config = this.getConfig(),
-            ids = config.answers[ans];
+            ids = config._userAnswer[ans];
+            console.log(ids)
             return this._getModels(ids);
         },
 
@@ -148,7 +149,8 @@ define([
         getCorrectModel: function () {
             if (!this.isUsingCorrect()) return;
             var config = this.getConfig(),
-            ids = config.answers.correct;
+            ids = config._userAnswer.correct;
+            console.log(ids)
             return this._getModels(ids);
         },
         // /**
@@ -158,13 +160,14 @@ define([
             if (!this.isUsingIncorrect()) return;
 
             var config = this.getConfig(),
-                ids = config.answers.incorrect;
+                ids = config._userAnswer.incorrect;
+                console.log(ids)
             return this._getModels(ids);
         },
 
         // //PRIVATE
         _checkUserAnswerModel: function (ids, id) {
-            return this._checkModel(ids, id, "answers");
+            return this._checkModel(ids, id, "_userAnswer");
         },
         _checkCorrectModel: function (ids, id) {
             return this._checkModel(ids, id, "correct");
@@ -202,6 +205,7 @@ define([
         },
 
         _getModels: function (ids) {
+          console.log(ids)
             if (ids.indexOf(",") == -1) {
                 var model = this._getModel(ids);
                 if (model) return [model];

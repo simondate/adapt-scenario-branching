@@ -7,7 +7,6 @@ define([
 
         postRender: function () {
             //console.log("SimpleBranchingView"+":"+this.model.get("_id"), "postRender");
-
             CoreArticleView.prototype.postRender.call(this);
             if (this.model.isBranchingEnabled()) {
                 this.hideBlocks();
@@ -22,37 +21,38 @@ define([
         hideBlocks: function () {
 
             var blockModelScenario = this.model.get('_scenario'),
-            ans = blockModelScenario.answers;
+            ans = blockModelScenario._userAnswer;
             for(key in ans){
                 var blockModel = Adapt.findById(ans[key]);
                 blockModel.set("_isAvailable", false);
-                blockModel.set("_isVisible", false);
+                blockModel.set("_isHidden", true);
                  try {
-                    $("." + blockModel.get("_id")).addClass("display-none");
+                    // $("." + blockModel.get("_id")).addClass("display-none");
+                    // $("." + blockModel.get("_id")).addClass("display-none");
                 } catch (e) {
                     console.error(e);
                 }
 
                 Adapt.trigger("pageLevelProgress:update");
 
-            }  
+            }
         },
         showBlock: function () {
             var models;
             var config = this.model.getConfig();
             var ansID;
-          
+
          // Look in to setting completion
 
                 //     //force completion of "hidden" child
             var config = this.model.getConfig();
-            if (config.answers.hasOwnProperty("0")) {
+            if (config._userAnswer.hasOwnProperty("0")) {
                 var notAns = this.model.isQuestionNotAnswer();
                 for (var i = 0, len = notAns.length; i < len; i++) {
                     var nu = this.model.getAnswerModel(notAns[i]);
                     if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
                 }
-            }else if (config.answers.hasOwnProperty("correct") && config.answers.hasOwnProperty("incorrect")) {
+            }else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
                 if (!this.model.isQuestionCorrect()) {
                     var nu = this.model.getCorrectModel();
                     if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
@@ -61,12 +61,12 @@ define([
                     if(!this.notUsed.includes(nu[0].attributes._id)) this.notUsed.push(nu[0].attributes._id);
                 }
             }
-      
 
 
-            if (config.answers.hasOwnProperty("0")) {
+
+            if (config._userAnswer.hasOwnProperty("0")) {
                 var ans = this.model.isQuestionAnswer();
-       
+
                 //show chosen answer
                 models = this.model.getAnswerModel(ans);
                 ansID = models[0];
@@ -82,8 +82,8 @@ define([
                 // for (var i = 0, len = notAns.length; i < len; i++) {
                 //     //this._disableModel(this.model.getAnswerModel(notAns[i]));
                 // }
-                
-            } else if (config.answers.hasOwnProperty("correct") && config.answers.hasOwnProperty("incorrect")) {
+
+            } else if (config._userAnswer.hasOwnProperty("correct") && config._userAnswer.hasOwnProperty("incorrect")) {
                 if (this.model.isQuestionCorrect()) {
                     //show 'correct' component
                     models = this.model.getCorrectModel();
@@ -118,7 +118,7 @@ define([
                     var m = models[i];
                     $("." + m.get("_id")).removeClass("display-none");
                     m.set("_isAvailable", true);
-                    m.set("_isVisible", true);
+                    m.set("_isHidden", false);
                 }
             }
 
@@ -130,7 +130,7 @@ define([
 
         _setCompletionOnModel: function () {
            //console.log("SimpleBranchingView" + ":" + this.model.get("_id"), "_setCompletionOnModel(models, status)", models, status);
-            
+
                 for (var i = 0; i < this.notUsed.length; i++) {
                     var model = Adapt.findById(this.notUsed[i]);
                     model.set({
@@ -140,7 +140,7 @@ define([
                 }
 
                 this._disableModel();
-    
+
         },
         _disableModel: function () {
            //console.log("SimpleBranchingView" + ":" + this.model.get("_id"), "_disableModel(models)", models);
